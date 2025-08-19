@@ -1,4 +1,4 @@
-name: Deploy static Next.js to GitHub Pages
+name: Deploy static site to GitHub Pages
 
 on:
   push:
@@ -18,14 +18,42 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
         with:
-          path: ./out
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dfflib/package-lock.json
+
+      - name: Install deps (prefer ci, fallback to install)
+        working-directory: dfflib
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build (Next export)
+        env:
+          NODE_ENV: production
+        working-directory: dfflib
+        run: npm run build
+
+      - name: Ensure .nojekyll
+        working-directory: dfflib
+        run: |
+          mkdir -p out
+          touch out/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dfflib/out
+
   deploy:
     environment:
       name: github-pages
