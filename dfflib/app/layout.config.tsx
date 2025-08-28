@@ -23,5 +23,17 @@ export const baseOptions: BaseLayoutProps = {
     ),
   },
   // see https://fumadocs.dev/docs/ui/navigation/links
-  links: [],
+  links: [
+    { type: 'menu', text: 'Documentation', items: [
+        { text: 'Layers', url: '/docs' },
+        { text: 'Implementation', url: '/docs' },
+        { text: 'Upgrade', url: '/docs' },
+        { text: 'Migrate', url: '/docs' },
+      ]},
+    { text: 'Training', url: '/#training', active: 'nested-url' },
+    { text: 'Assessment', url: '/#maturity', active: 'nested-url' },
+
+
+  ],
+  githubUrl: 'https://github.com/MariusSnijder/fflibpoc',
 };
